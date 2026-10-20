@@ -1,0 +1,287 @@
+{
+  "version": "1.0",
+  "outcome": "crime_rate",
+  "outcome_definition": "Recorded criminal offence rate per 100,000 residents by statistical area (SA2/LGA) and year, from NSW Police / NSW Bureau of Crime Statistics and Research (SBS) open data.",
+  "notes": "Curated seed catalog grounded in Australian criminological literature. Used as the fallback when the local LLM is unavailable, and as the seed that LLM discovery merges with. Individual-level offender attributes (age, gender, education of offenders) are NOT available in NSW open data; area-level proxies are used instead and results are interpreted at the area level.",
+  "factors": [
+    {
+      "factor_id": "unemployment_rate",
+      "name": "Unemployment rate",
+      "category": "economics",
+      "definition": "Share of the labour force aged 15+ that is unemployed and actively seeking work.",
+      "expected_sign": "+",
+      "unit": "% of labour force",
+      "proxies": [
+        {"dataset": "ABS Labour Force Australia (Cat. 6202.0)", "variable": "Persons labour force status - unemployment rate", "geography": "LGA", "frequency": "annual"}
+      ],
+      "citations": ["Nelson, M. (2002) 'Crime, unemployment and youth: a panel study for Australia', Applied Economics"],
+      "evidence": "moderate",
+      "notes": "causes: reduced legitimate income and informal social control; also a strong confounder for area disadvantage."
+    },
+    {
+      "factor_id": "median_household_income",
+      "name": "Median household income",
+      "category": "economics",
+      "definition": "Median weekly household income of occupied private dwellings.",
+      "expected_sign": "-",
+      "unit": "$ per week",
+      "proxies": [
+        {"dataset": "ABS Census - Data by Region", "variable": "Household Income (weekly)", "geography": "SA2", "frequency": "census"}
+      ],
+      "citations": ["Trickett, P. & Adolphe, A. (2020) 'The geography of recorded crime in Australia', AIC Trends & Issues 548"],
+      "evidence": "strong",
+      "notes": "confounder: common cause of many other factors; absolute vs relative deprivation debate."
+    },
+    {
+      "factor_id": "income_inequality",
+      "name": "Income inequality",
+      "category": "economics",
+      "definition": "Within-area dispersion of household income (e.g. 80/20 ratio or Gini).",
+      "expected_sign": "+",
+      "unit": "ratio",
+      "proxies": [
+        {"dataset": "ABS Census - Data by Region", "variable": "Income distribution by decile", "geography": "SA2", "frequency": "census"}
+      ],
+      "citations": ["Weatherburn, D. (2015) 'The Economics of Crime in Australia', Australia & Society Series"],
+      "evidence": "moderate",
+      "notes": "strain theory mechanism; relative deprivation."
+    },
+    {
+      "factor_id": "education_completion",
+      "name": "Year 12 or equivalent completion",
+      "category": "social",
+      "definition": "Share of people aged 20-64 who completed Year 12 or equivalent.",
+      "expected_sign": "-",
+      "unit": "% of ages 20-64",
+      "proxies": [
+        {"dataset": "ABS Census - Data by Region", "variable": "Educational attainment - Year 12 or equivalent", "geography": "SA2", "frequency": "census"}
+      ],
+      "citations": ["Carrington, J. (2020) 'Crime and justice trends in Australia', AIC"],
+      "evidence": "moderate",
+      "notes": "area-level proxy for the unavailable individual offender education attribute; human-capital mechanism."
+    },
+    {
+      "factor_id": "youth_population_share",
+      "name": "Youth population share",
+      "category": "demographics",
+      "definition": "Share of residents aged 15-24 (the peak offending age band).",
+      "expected_sign": "+",
+      "unit": "% of population",
+      "proxies": [
+        {"dataset": "ABS Census - Data by Region", "variable": "Age by broad groups", "geography": "SA2", "frequency": "census"}
+      ],
+      "citations": ["Donnelly, N., Scott, J. & Poynton, S. (2017) 'Geographic trends in robbery in NSW', AIC Trends & Issues 525"],
+      "evidence": "strong",
+      "notes": "age structure is the single strongest demographic confounder of area crime rates; area-level proxy for offender age."
+    },
+    {
+      "factor_id": "lone_parent_households",
+      "name": "Lone-parent households",
+      "category": "demographics",
+      "definition": "Share of families with children that are one-parent families.",
+      "expected_sign": "?",
+      "unit": "% of families with children",
+      "proxies": [
+        {"dataset": "ABS Census - Data by Region", "variable": "Family and household composition", "geography": "SA2", "frequency": "census"}
+      ],
+      "citations": ["Weatherburn, D. (2015) 'The Economics of Crime in Australia'"],
+      "evidence": "weak",
+      "notes": "social-disorganisation mechanism; highly confounded by income; risk of stigmatising interpretation - handle with care."
+    },
+    {
+      "factor_id": "dwelling_crowding",
+      "name": "Dwelling crowding",
+      "category": "housing",
+      "definition": "Share of occupied private dwellings with one or more extra bedroom needed (crowding index).",
+      "expected_sign": "+",
+      "unit": "% of dwellings",
+      "proxies": [
+        {"dataset": "ABS Census - Data by Region", "variable": "Dwellings - number of bedrooms", "geography": "SA2", "frequency": "census"}
+      ],
+      "citations": ["Moore, T., Adolphe, A. & Kavanagh, A. (2021) 'Crime prevention through urban design and place management', Crime Prevention Science"],
+      "evidence": "moderate",
+      "notes": "mediator between poverty and crime; routine-activity mechanism."
+    },
+    {
+      "factor_id": "rent_burden",
+      "name": "Rent burden (housing stress)",
+      "category": "housing",
+      "definition": "Share of renting households paying more than 30% of household income on rent.",
+      "expected_sign": "+",
+      "unit": "% of renting households",
+      "proxies": [
+        {"dataset": "ABS Census - Data by Region", "variable": "Rent as a percentage of household income", "geography": "SA2", "frequency": "census"}
+      ],
+      "citations": ["Moore, T., Adolphe, A. & Kavanagh, A. (2021) op. cit."],
+      "evidence": "moderate",
+      "notes": "financial-stress mechanism; mediator between income shocks and offending."
+    },
+    {
+      "factor_id": "rental_vacancy_shortage",
+      "name": "Rental vacancy shortage",
+      "category": "housing",
+      "definition": "Annual rental vacancy rate (inverted: shortage = low vacancy).",
+      "expected_sign": "+",
+      "unit": "% of stock",
+      "proxies": [
+        {"dataset": "NSW Tenant Fee and Rental Commission - Rental Market Reports", "variable": "Quarterly vacancy rate", "geography": "LGA", "frequency": "quarterly"}
+      ],
+      "citations": ["Moore, T. et al. (2021) op. cit."],
+      "evidence": "weak",
+      "notes": "housing-market tightness as driver of crowding and mobility."
+    },
+    {
+      "factor_id": "public_housing_share",
+      "name": "Public housing concentration",
+      "category": "housing",
+      "definition": "Share of occupied dwellings rented from state/territory housing authorities.",
+      "expected_sign": "?",
+      "unit": "% of occupied dwellings",
+      "proxies": [
+        {"dataset": "ABS Census - Data by Region", "variable": "Dwelling tenure - rented from State or Territory Housing Authority", "geography": "SA2", "frequency": "census"}
+      ],
+      "citations": ["Weatherburn, D. (2015) op. cit."],
+      "evidence": "weak",
+      "notes": "concentration-of-disadvantage mechanism; strongly confounded by income and public-housing allocation policy."
+    },
+    {
+      "factor_id": "public_transport_access",
+      "name": "Public transport access",
+      "category": "infrastructure",
+      "definition": "Share of dwellings within walking distance of frequent public transport (or Transport Access score).",
+      "expected_sign": "-",
+      "unit": "% of dwellings",
+      "proxies": [
+        {"dataset": "NSW Transport for NSW - Transport for NSW Access Panel / open data", "variable": "PT accessibility score", "geography": "SA2", "frequency": "annual"}
+      ],
+      "citations": ["Moore, T. et al. (2021) op. cit."],
+      "evidence": "weak",
+      "notes": "access to legitimate activity spaces; also raises guardianship/target flux - ambiguous sign."
+    },
+    {
+      "factor_id": "alcohol_outlets_density",
+      "name": "Alcohol outlet density",
+      "category": "environment",
+      "definition": "Licensed on-premises and packaged liquor outlets per 1,000 residents.",
+      "expected_sign": "+",
+      "unit": "outlets per 1,000",
+      "proxies": [
+        {"dataset": "Liquor & Gaming NSW - licensed premises register", "variable": "count of licensed premises", "geography": "LGA", "frequency": "annual"}
+      ],
+      "citations": ["Kavanagh, A. & Virgil, H. (2017) 'The theoretical underpinnings of alcohol-related harm and proposals for policy change', Int. J. Drug Policy"],
+      "evidence": "strong",
+      "notes": "routine activity: convergence of motivated offenders and suitable targets around venues; disinhibiting effect of alcohol."
+    },
+    {
+      "factor_id": "gambling_venue_density",
+      "name": "Gambling venue density",
+      "category": "environment",
+      "definition": "Registered clubs and venues with gaming machines per 1,000 residents.",
+      "expected_sign": "+",
+      "unit": "venues per 1,000",
+      "proxies": [
+        {"dataset": "Liquor & Gaming NSW / Independent Liquor & Gaming Authority registers", "variable": "count of registered clubs with gaming machines", "geography": "LGA", "frequency": "annual"}
+      ],
+      "citations": ["Weatherburn, D. (2015) op. cit."],
+      "evidence": "weak",
+      "notes": "financial stress from problem gambling; property-crime mechanism."
+    },
+    {
+      "factor_id": "mental_health_admissions",
+      "name": "Ambulatory mental-health separations",
+      "category": "health",
+      "definition": "Mental-health related ambulatory care sensitive conditions separations per 1,000 (PHN/HHN level).",
+      "expected_sign": "+",
+      "unit": "per 1,000",
+      "proxies": [
+        {"dataset": "AIHW / NSW Health - Ambulatory Care Sensitive Conditions", "variable": "Mental health conditions separations", "geography": "PHN", "frequency": "annual"}
+      ],
+      "citations": ["AIHW (2023) 'Alcohol, tobacco & other drugs in Australia'"],
+      "evidence": "weak",
+      "notes": "bidirectional with offending; use lagged values."
+    },
+    {
+      "factor_id": "seifa_disadvantage",
+      "name": "SEIFA relative disadvantage",
+      "category": "economics",
+      "definition": "ABS SEIFA Index of Relative Socio-economic Disadvantage (IRSD) score for the area.",
+      "expected_sign": "+",
+      "unit": "SEIFA score (deciles)",
+      "proxies": [
+        {"dataset": "ABS Census - Data by Region", "variable": "SEIFA Index of Relative Socio-economic Disadvantage", "geography": "SA2", "frequency": "census"}
+      ],
+      "citations": ["Johnson, M. (2018) 'Using SEIFA and its associated indices when working with disadvantaged areas', ABS Views"],
+      "evidence": "strong",
+      "notes": "composite confounder; preferred over ethnicity-based proxies for ethical governance reasons."
+    },
+    {
+      "factor_id": "transient_population",
+      "name": "Transient / visitor population",
+      "category": "demographics",
+      "definition": "Visitors present on Census night plus unoccupied dwellings share - proxy for population flux (tourism, FIFO, construction workforce).",
+      "expected_sign": "+",
+      "unit": "index",
+      "proxies": [
+        {"dataset": "ABS Census - Data by Region", "variable": "Number of visitors on Census night; Unoccupied private dwellings", "geography": "SA2", "frequency": "census"}
+      ],
+      "citations": ["Trickett, P. & Adolphe, A. (2020) op. cit."],
+      "evidence": "moderate",
+      "notes": "routine activity: targets and motivated strangers converge; also inflates denominator of per-capita rates."
+    },
+    {
+      "factor_id": "heat_days",
+      "name": "Hot days",
+      "category": "environment",
+      "definition": "Annual count of days at or above 35 degrees C at the nearest BOM station.",
+      "expected_sign": "+",
+      "unit": "days per year",
+      "proxies": [
+        {"dataset": "Bureau of Meteorology - Climate data online", "variable": "days >= 35C", "geography": "station->SA2", "frequency": "annual"}
+      ],
+      "citations": ["Currey, R. C. (1973) 'Air temperature and violent crime', Sociological Inquiry"],
+      "evidence": "moderate",
+      "notes": "heat-aggression and routine-activity mechanisms; strongest for violent crime."
+    },
+    {
+      "factor_id": "police_resources",
+      "name": "Police resourcing",
+      "category": "policing",
+      "definition": "Police officers per 100,000 residents by Local Area Command.",
+      "expected_sign": "-",
+      "unit": "per 100,000",
+      "proxies": [
+        {"dataset": "NSW Police Force open data / annual reports", "variable": "officers by Local Area Command", "geography": "LAC", "frequency": "annual"}
+      ],
+      "citations": ["Weatherburn, D. & Vignaendra, S. (2003) 'Does increased police presence reduce crime?', NSW SBS Technical Paper 3"],
+      "evidence": "moderate",
+      "notes": "simultaneity: police are deployed to high-crime areas (reverse causation); use lags and instrument where possible."
+    }
+  ],
+  "edges": [
+    {"source": "unemployment_rate", "target": "crime_rate", "relation": "causes", "confidence": 0.6},
+    {"source": "median_household_income", "target": "crime_rate", "relation": "causes", "confidence": 0.6},
+    {"source": "income_inequality", "target": "crime_rate", "relation": "causes", "confidence": 0.5},
+    {"source": "education_completion", "target": "crime_rate", "relation": "causes", "confidence": 0.55},
+    {"source": "youth_population_share", "target": "crime_rate", "relation": "causes", "confidence": 0.75},
+    {"source": "dwelling_crowding", "target": "crime_rate", "relation": "causes", "confidence": 0.5},
+    {"source": "rent_burden", "target": "crime_rate", "relation": "causes", "confidence": 0.5},
+    {"source": "alcohol_outlets_density", "target": "crime_rate", "relation": "causes", "confidence": 0.65},
+    {"source": "gambling_venue_density", "target": "crime_rate", "relation": "causes", "confidence": 0.4},
+    {"source": "mental_health_admissions", "target": "crime_rate", "relation": "causes", "confidence": 0.4},
+    {"source": "seifa_disadvantage", "target": "crime_rate", "relation": "causes", "confidence": 0.7},
+    {"source": "transient_population", "target": "crime_rate", "relation": "causes", "confidence": 0.55},
+    {"source": "heat_days", "target": "crime_rate", "relation": "causes", "confidence": 0.5},
+    {"source": "police_resources", "target": "crime_rate", "relation": "causes", "confidence": 0.5},
+    {"source": "public_transport_access", "target": "crime_rate", "relation": "causes", "confidence": 0.35},
+    {"source": "public_housing_share", "target": "crime_rate", "relation": "causes", "confidence": 0.35},
+    {"source": "rental_vacancy_shortage", "target": "rent_burden", "relation": "causes", "confidence": 0.6},
+    {"source": "median_household_income", "target": "rent_burden", "relation": "causes", "confidence": 0.7},
+    {"source": "education_completion", "target": "unemployment_rate", "relation": "causes", "confidence": 0.6},
+    {"source": "unemployment_rate", "target": "income_inequality", "relation": "causes", "confidence": 0.5},
+    {"source": "seifa_disadvantage", "target": "median_household_income", "relation": "correlates", "confidence": 0.8},
+    {"source": "seifa_disadvantage", "target": "education_completion", "relation": "correlates", "confidence": 0.7},
+    {"source": "dwelling_crowding", "target": "rent_burden", "relation": "correlates", "confidence": 0.6},
+    {"source": "public_housing_share", "target": "median_household_income", "relation": "correlates", "confidence": 0.6},
+    {"source": "lone_parent_households", "target": "crime_rate", "relation": "correlates", "confidence": 0.35}
+  ]
+}

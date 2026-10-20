@@ -1,0 +1,61 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nsw-crime-causal"
+version = "0.1.0"
+description = "LLM-assisted causal discovery and inference on NSW crime rates: DataVault 2.0 (MSSQL) storage, GNN message-passing factor embeddings, DoWhy + EconML estimation"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "NSW Crime Causal Project" }]
+dependencies = [
+  "pandas>=2.0",
+  "numpy>=1.26",
+  "scipy>=1.12",
+  "scikit-learn>=1.4",
+  "networkx>=3.2",
+  "matplotlib>=3.8",
+  "pydantic>=2.5",
+  "pydantic-settings>=2.1",
+  "typer>=0.12",
+  "rich>=13.0",
+  "python-dotenv>=1.0",
+  "joblib>=1.3",
+  "tabulate>=0.9",
+]
+
+[project.optional-dependencies]
+db = ["pyodbc>=5.1", "SQLAlchemy>=2.0"]
+llm = ["openai>=1.30", "httpx>=0.27"]
+gnn = ["torch>=2.2"]
+causal = ["dowhy>=0.11", "econml>=0.15", "causal-learn>=0.1.3", "statsmodels>=0.14"]
+all = [
+  "pyodbc>=5.1", "SQLAlchemy>=2.0",
+  "openai>=1.30", "httpx>=0.27",
+  "torch>=2.2",
+  "dowhy>=0.11", "econml>=0.15", "causal-learn>=0.1.3", "statsmodels>=0.14",
+]
+dev = ["pytest>=8.0", "ruff>=0.4"]
+
+[project.scripts]
+nswcausal = "nsw_causal.cli:app"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+nsw_causal = ["sql/*.sql", "data/*.json"]
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP", "B"]
+ignore = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

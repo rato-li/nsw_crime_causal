@@ -1,0 +1,26 @@
+# Environment / secrets
+.env
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Pipeline artifacts (regenerable)
+artifacts/
+reports/
+data/raw/
+data/processed/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
